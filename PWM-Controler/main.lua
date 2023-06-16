@@ -1,4 +1,4 @@
-PROJECT = "pwmdemo"
+PROJECT = "PWM-Controler"
 VERSION = "1.0.0"
 
 log.info("main", PROJECT, VERSION)
