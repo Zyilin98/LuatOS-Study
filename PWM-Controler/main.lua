@@ -4,10 +4,10 @@ VERSION = "1.0.0"
 log.info("main", PROJECT, VERSION)
 
 _G.sys = require("sys")
--- 丢狗，5S后饿狗，每2S喂狗
+-- 丢狗，10S后饿狗，每3S喂狗
 if wdt then
-    wdt.init(5000)
-    sys.timerLoopStart(wdt.feed, 2000)
+    wdt.init(10000)
+    sys.timerLoopStart(wdt.feed, 3000)
 end
 
 -- UI带屏的项目一般不需要低功耗了吧, Air101/Air103设置到最高性能
