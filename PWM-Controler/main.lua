@@ -61,8 +61,9 @@ u8g2.begin({ic = "ssd1306",direction = 0,mode="i2c_hw",i2c_id=hw_i2c_id,i2c_spee
 
 u8g2.SetFontMode(1)
 u8g2.ClearBuffer()
-u8g2.SetFont(u8g2.font_opposansm8)
-u8g2.DrawUTF8("U8g2+LuatOS", 32, 22)
+u8g2.SetFont(u8g2.font_opposansm8_chinese)
+u8g2.DrawUTF8("LuatOS风扇测试器", 16, 22)
+u8g2.DrawUTF8("基于PWM调速原理", 16, 42)
 u8g2.SendBuffer()
 
 --导入ec11库
@@ -91,9 +92,15 @@ local function ec11_callBack(direction)
         speed = 0
     end
     u8g2.ClearBuffer()
-    u8g2.DrawUTF8("PWM Speed Now:"speed, 0, 24)
+    u8g2.SetFont(u8g2.font_opposansm8_chinese)
+    u8g2.DrawUTF8("当前速度: ", 10, 15)
+    u8g2.DrawUTF8(speed, 56, 15)
+    u8g2.DrawUTF8("%", 76, 15)
+    u8g2.DrawUTF8("当前转速: ", 10, 35)
+    u8g2.DrawUTF8(speed, 56, 35)
+    u8g2.DrawUTF8("RPM", 86, 35)
     u8g2.SendBuffer()
-    pwm.open(PWM_ID, 440, speed)
+    pwm.open(PWM_ID, 440, speed)    
     log.info("pwm", "speed now", speed, "%")
 end
 sys.subscribe("ec11",ec11_callBack)
