@@ -6,8 +6,8 @@ log.info("main", PROJECT, VERSION)
 _G.sys = require("sys")
 
 if wdt then
-    wdt.init(900)
-    sys.timerLoopStart(wdt.feed, 300)
+    wdt.init(5000)
+    sys.timerLoopStart(wdt.feed, 2000)
 end
 
 
@@ -25,32 +25,14 @@ end
 gpio.debounce(1, 100)
 gpio.debounce(4, 100)
 
--- 用法实例, 当前支持一定一脉冲
+
 local ec11 = require("ec11")
 
--- 按实际接线写
+
 local GPIO_A = 1
 local GPIO_B = 4
 ec11.init(GPIO_A,GPIO_B)
 local speed = 0
--- 演示接收旋转效果
-local function increaseSpeed()
-    speed = speed + 5
-    if speed > 70 then
-        speed = 70
-    end
-    log.info("pwm", "speed now", speed, "%")
-    pwm.open(PWM_ID, 200, speed)
-end
-
-local function decreaseSpeed()
-    speed = speed - 5
-    if speed < 0 then
-        speed = 0
-    end
-    log.info("pwm", "speed now", speed, "%")
-    pwm.open(PWM_ID, 200, speed)
-end
 local function ec11_callBack(direction)
     if direction == "left" then
         -- 往左选,逆时针
@@ -58,6 +40,13 @@ local function ec11_callBack(direction)
     else
         -- 往右旋,顺时针
         speed = speed + 1
+    end
+    if speed > 100 then
+        speed = 5
+
+    end
+    if speed < 0 then
+        speed = 0
     end
     pwm.open(PWM_ID, 200, speed)
     log.info("pwm", "speed now", speed, "%")
