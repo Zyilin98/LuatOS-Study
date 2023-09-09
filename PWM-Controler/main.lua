@@ -61,9 +61,9 @@ u8g2.begin({ic = "ssd1306",direction = 0,mode="i2c_hw",i2c_id=hw_i2c_id,i2c_spee
 
 u8g2.SetFontMode(1)
 u8g2.ClearBuffer()
-u8g2.SetFont(u8g2.font_opposansm8_chinese)
-u8g2.DrawUTF8("LuatOS风扇测试器", 16, 22)
-u8g2.DrawUTF8("基于PWM调速原理", 16, 42)
+u8g2.SetFont(u8g2.font_opposansm10_chinese)
+u8g2.DrawUTF8("LuatOS风扇测试器", 10, 22)
+u8g2.DrawUTF8("基于PWM调速原理", 10, 42)
 u8g2.SendBuffer()
 
 --导入ec11库
@@ -92,17 +92,45 @@ local function ec11_callBack(direction)
         speed = 0
     end
     u8g2.ClearBuffer()
-    u8g2.SetFont(u8g2.font_opposansm8_chinese)
+    u8g2.SetFont(u8g2.font_opposansm10_chinese)
     u8g2.DrawUTF8("当前速度: ", 10, 15)
-    u8g2.DrawUTF8(speed, 56, 15)
-    u8g2.DrawUTF8("%", 76, 15)
-    u8g2.DrawUTF8("当前转速: ", 10, 35)
-    u8g2.DrawUTF8(speed, 56, 35)
-    u8g2.DrawUTF8("RPM", 86, 35)
+    u8g2.DrawUTF8(speed, 65, 15)
+    u8g2.DrawUTF8("%", 90, 15)
     u8g2.SendBuffer()
     pwm.open(PWM_ID, 440, speed)    
     log.info("pwm", "speed now", speed, "%")
 end
+--测试计算频率
+-- 设置GPIO口为输入模式，并启用内部上拉
+
+-- 定义变量用于存储脉冲计数和时间戳
+sys.taskInit(function()
+
+        local freqpin = 17
+        local pulseState = 1
+        local pulse_count = 0
+        local hz = mcu.hz()
+
+        gpio.setup(freqpin, function(level)
+             if level == 0 then
+                pulse_count = pulse_count + 1                
+            end
+            if pulse_count == 0 then
+                local last_time = mcu.ticks
+            end
+            if pulse_count == 2 then
+                -- 获取当前时间戳（单位为毫秒）
+                local current_time = mcu.ticks
+                -- 计算时间差和频率
+                local time_diff = current_time - last_time
+                local freq = hz / time_diff
+                local pulse_count = 0
+                -- 输出频率
+                log.info("freq", freq)
+            end
+        end, gpio.PULLUP,gpio.RISING)
+    end)
+
 sys.subscribe("ec11",ec11_callBack)
 
 sys.run()
