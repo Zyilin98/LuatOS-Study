@@ -21,6 +21,7 @@ pwm.open(PWM_ID, 440, 1)
 -- 防抖设置200ms
 gpio.debounce(2, 200)
 gpio.debounce(3, 200)
+gpio.debounce(17, 50)
 -- 初始化显示屏
 local rtos_bsp = rtos.bsp()
 
@@ -62,8 +63,8 @@ u8g2.begin({ic = "ssd1306",direction = 0,mode="i2c_hw",i2c_id=hw_i2c_id,i2c_spee
 u8g2.SetFontMode(1)
 u8g2.ClearBuffer()
 u8g2.SetFont(u8g2.font_opposansm10_chinese)
-u8g2.DrawUTF8("LuatOS风扇测试器", 10, 22)
-u8g2.DrawUTF8("基于PWM调速原理", 10, 42)
+u8g2.DrawUTF8("LuatOS风扇测试器", 8, 22)
+u8g2.DrawUTF8("基于PWM调速原理", 8, 42)
 u8g2.SendBuffer()
 
 --导入ec11库
@@ -93,9 +94,9 @@ local function ec11_callBack(direction)
     end
     u8g2.ClearBuffer()
     u8g2.SetFont(u8g2.font_opposansm10_chinese)
-    u8g2.DrawUTF8("当前速度: ", 10, 15)
-    u8g2.DrawUTF8(speed, 65, 15)
-    u8g2.DrawUTF8("%", 90, 15)
+    u8g2.DrawUTF8("当前速度: ",10, 15)
+    u8g2.DrawUTF8(speed,65,15)
+    u8g2.DrawUTF8("%",90,15)
     u8g2.SendBuffer()
     pwm.open(PWM_ID, 440, speed)    
     log.info("pwm", "speed now", speed, "%")
@@ -112,7 +113,7 @@ sys.taskInit(function()
         local hz = mcu.hz()
 
         gpio.setup(freqpin, function(level)
-             if level == 0 then
+            if level == 0 then
                 pulse_count = pulse_count + 1                
             end
             if pulse_count == 0 then
